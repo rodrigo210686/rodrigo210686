@@ -1,4 +1,4 @@
-# A Cloud Guru: Introduction to CloudFormation
+# A Cloud Guru: Introduction to CloudFormation - Rodrigo Barbosa
 ## By Abhaya Chauhan
 
 An Introduction to CloudFormation taking students through constructing templates to build a solid understanding of how CloudFormation works.
