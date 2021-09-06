@@ -7,3 +7,5 @@ Resources:
       Tags:
         - Key: Name
           Value: A simple example
+        - key: Lab
+          Value: LAB 1
