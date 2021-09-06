@@ -9,3 +9,5 @@ Resources:
           Value: A simple example
         - key: Lab
           Value: LAB 1
+        - key: Owner
+          Value: Team1
