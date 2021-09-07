@@ -7,7 +7,7 @@ Resources:
       Tags:
         - Key: Name
           Value: A simple example
-        - key: Lab
-          Value: LAB 1
-        - key: Owner
+        - Key: Owner
           Value: Team1
+        - Key: Departamento
+          Value: TI
