@@ -11,7 +11,7 @@ Resources:
           Value: !Join 
             - ""
             - - "EC2 Instance for "
-              - !Ref AWS::Region
+              - !Ref AWS::Region #Pseudo parametro - Irá colocar o nome da região na instancia
   MySecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
