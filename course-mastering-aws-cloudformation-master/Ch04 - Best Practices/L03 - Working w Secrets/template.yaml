@@ -1,0 +1,78 @@
+Transform: AWS::Serverless-2016-10-31
+
+Mappings:
+  SettingsMap:
+    prod:
+      SSMSECRETS: /acg/master-cfn/secrets
+    dev:
+      SSMSECRETS: /acg/master-cfn/secrets
+
+Resources:
+  DecryptFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs12.x
+      InlineCode: |
+        const AWS = require('aws-sdk');
+        const { AWS_REGION: region, SSMSECRETS } = process.env;
+        const ssm = new AWS.SSM({ apiVersion: '2014-11-06', region });
+
+        let SECRETS;
+
+        exports.handler = async (event, context, callback) => {
+          try {
+            SECRETS = SECRETS || (await decrypt(SSMSECRETS));
+
+            callback(null, SECRETS);
+          } catch (error) {
+            console.log(error);
+            callback(error);
+          }
+        };
+
+        const decrypt = Name =>
+          ssm
+            .getParameter({
+              Name,
+              WithDecryption: true,
+            })
+            .promise()
+            .then(({ Parameter: { Value } }) => {
+              const decryptedText = String(Value);
+              return JSON.parse(decryptedText);
+            });
+
+      Handler: index.handler
+      Role: !GetAtt DecryptFunctionRole.Arn
+      Environment:
+        Variables:
+          SSMSECRETS: !FindInMap [SettingsMap, dev, SSMSECRETS]
+
+  DecryptFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: !Sub ${AWS::StackName}-DecryptFunction
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub ${AWS::StackName}-DecryptFunction
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter*
+                Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/acg/master-cfn/secrets

@@ -1,0 +1,539 @@
+# CH 01
+000:
+  question: Which is valid syntax to get an attribute off a resource?
+  answers:
+    - text: "!Get MyS3Bucket.Domain"
+      correct: true
+    - text: "Fn::GetAtt: [ MyS3Bucket, Domain ]"
+      correct: true
+    - text: "{ 'Fn::GetAtt' : [ 'MyS3Bucket', 'Domain' ] }"
+      correct: true
+    - text: "!Get: MyS3Bucket.Domain"
+  explanation: "All but the last one are correct. There is no colon needed for YAML shorthand intrinsic funtions. The first is YAML shorthand. The second is long form. The third is JSON."
+  links:
+    - Fn::GetAtt (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html)
+  lesson:
+    - Chapter 1 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: What is the resource limit per CloudFormation template?
+  answers:
+    - text: "2000"
+    - text: "100"
+    - text: "500"
+    - text: "200"
+      correct: true
+  explanation: "Each template can have a maximum of 200 resources. Nesting templates is a workaround to gain 200*N additional resources per child template."
+  links:
+    - CloudFormation Limits (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html)
+  lesson:
+    - Chapter 1 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: Which CloudFormation feature is best used to ensure only existing/valid EC2 instance ARNs are used as inputs into a template?
+  answers:
+    - text: "Macro"
+    - text: "AWS-Specific Parameter Types"
+      correct: true
+    - text: "Transform"
+    - text: "Custom Resource"
+  explanation: "Using Parameter Types ensures only existing EC2 instances can be used in parameters and also supplies console users with a custom input field that lists only existing EC2 Instances from which they can choose."
+  links:
+    - AWS-Specific Parameter Types (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html#aws-specific-parameter-types)
+  lesson:
+    - Chapter 1 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: Which is a valid Parameter Contraint?
+  answers:
+    - text: "MinLength"
+      correct: true
+    - text: "AllowedValues"
+      correct: true
+    - text: "RegEx"
+    - text: "MaxSize"
+  explanation: "Both 'MinLength' and 'AllowedValues' are valid. Controlling the minimum lenght of a string, and setting a list of possible values respectfully. The constraint used when wanting to use a regular expression is 'AllowedPattern' and MaxSize is just made up."
+  links:
+    - AWS-Specific Parameter Types (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html#parameters-section-structure-properties)
+  lesson:
+    - Chapter 1 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+
+# CH 02
+000:
+  question: Which is the best approach if you need to use an AWS resource that is currently unsupported in CloudFormation?
+  answers:
+    - text: "Write a Macro that can shim in support for the resource."
+    - text: "Write a custom resource that uses the AWS SDK to handle the resource."
+      correct: true
+    - text: "Declare and EC2 instance and install a service application onto it that can function as an alterative to your missing AWS service."
+    - text: "Give up, and wait for AWS to officially support it."
+  explanation: "While one of these might actually be a possible alternative, a Macro, won't help here. The best option is to create a custom resource to shim in the support. The only requirement is that the unsupported service is at least supported in AWS SDK."
+  links:
+    - AWS ElasticTranscoder Pipeline (https://github.com/iDVB/cfn-elastic-transcoder-pipeline)
+  lesson:
+    - Chapter 2 quiz
+  difficulty: H
+  questiontype: "3"
+  tags:
+    - CloudFormation
+000:
+  question: Which service(s) can be declared as a custom resource's service token?
+  answers:
+    - text: "AWS Lambda"
+      correct: true
+    - text: "Amazon Simple Queue Service"
+    - text: "Amazon EventBridge"
+    - text: "Amazon Simple Notification Service"
+      correct: true
+  explanation: "You can use both Lambda or an SNS topic to handle the custom resource. Since you can have many forms of compute listening to the SNS topic; there are many choices for processing the request. However, only Lambda and SNS can be specified as the Service Token."
+  links:
+    - Custom Resources (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html)
+  lesson:
+    - Chapter 2 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: What is a custom resource's 'RequestType' used for?
+  answers:
+    - text: "It can be used to determine if 'GetAtt' was used in order to return the proper attribute."
+    - text: "It defines which request type was used; GET, PUT, POST, or DELETE."
+    - text: "It can be used to determine which operation needs to be performed on the associated resource."
+      correct: true
+    - text: "It provides the phsyica resource id that relates to the underlining resource."
+  explanation: "The 'RequestType' is the property provided by CloudFormation to the custom resource each time it requests a CREATE, UPDATE or Delete on that resource. The custom resource uses this explicitly to determine which operation needs to be performed on the associated resource."
+  links:
+    - Custom Resource Request Types (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes.html)
+  lesson:
+    - Chapter 2 quiz
+  difficulty: M
+  questiontype: "2"
+  tags:
+    - CloudFormation
+000:
+  question: How long does CloudFormation wait for a Custom Resource to complete before timing out?
+  answers:
+    - text: "15 minutes"
+    - text: "It will never timeout."
+    - text: "30 minutes or whatever is set in the template as the custom resource 'timeout', whichever is less."
+      correct: true
+    - text: "1 hour"
+  explanation: "CloudFormation give the custom resource 1hour before timing out and rolling back. At which point CloudFormation will attempt to rollback, causing another call to the custom resource, in which case it will give another 1hour to process that new request. To avoid this, and specifically on Lambda backed custom resources, you can set a 'timeout' only on the Lambda, which will allow things to timeout much sooner."
+  links:
+    - Handling Custom Resource Timeouts (https://aws.amazon.com/premiumsupport/knowledge-center/best-practices-custom-cf-lambda/)
+  lesson:
+    - Chapter 2 quiz
+  difficulty: M
+  questiontype: "2"
+  tags:
+    - CloudFormation
+000:
+  question: Which of the following is the custom resource parameter that points to the backing ARN?
+  answers:
+    - text: "ServiceToken"
+      correct: true
+    - text: "TargetARN"
+    - text: "LambdaFunctionARN"
+    - text: "ServiceARN"
+  explanation: ""
+  links:
+    - Custom Resources (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html)
+  lesson:
+    - Chapter 2 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+
+# CH 03
+000:
+  question: How many Transforms can be used per template?
+  answers:
+    - text: "50"
+    - text: "200"
+    - text: "There is no limit."
+      correct: true
+    - text: "It depends on the number of resources in the template."
+  explanation: "There is currently no posted limit to the number of transforms you can use in a template."
+  links:
+    - Transforms (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html)
+  lesson:
+    - Chapter 3 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: Which of the following is a valid use case for a Transform?
+  answers:
+    - text: "You want to process a string array and turn it into a yaml list."
+      correct: true
+    - text: "You want to process an attribute returned by an existing resource in the template."
+    - text: "You want something that can clone a template resource N number of times."
+      correct: true
+    - text: "You want to abstract away a custom resource, so that users instead interact with a custom resource type like 'DVB::S3::Object'."
+      correct: true
+  explanation: "All options are valid use cases except for processing a resources attributes. CloudFormation Transforms only run on static template YAML, before provisioning starts. The result means that you will not have access to any resources attributes at time of processing. For something like this you would have to use separate templates where one imports the outputs of another."
+  links:
+    - Snippet Transforms (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-transform.html)
+    - Template Transforms (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html)
+  lesson:
+    - Chapter 3 quiz
+  difficulty: H
+  questiontype: "2"
+  tags:
+    - CloudFormation
+000:
+  question: Which of the following are incorrect statements?
+  answers:
+    - text: "Macros can only be processed by AWS Lambda."
+    - text: "Transforms can't return intrinsic functions."
+      correct: true
+    - text: "Template level macros cannot process the 'AWSTemplateFormatVersion' or 'Transform' section of the template."
+    - text: "Macros can be used inside of nested stacks."
+  explanation: "Intrinsic functions included in the template are evaluated after any macros. So while transforms cannot specifically return the 'ImportValue' intrinsic function; all other intrinsic functions can be returned. Macro processing was added to CreateStack and UpdateStack of nested stacks in 2018."
+  links:
+    - Transforms (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-macros.html)
+    - Macros in Transforms (https://aws.amazon.com/about-aws/whats-new/2018/12/aws-cloudformation-macros-can-now-be-used-in-templates-with-nest/)
+  lesson:
+    - Chapter 3 quiz
+  difficulty: M
+  questiontype: "2"
+  tags:
+    - CloudFormation
+
+# CH 04
+000:
+  question: In terms of security, which of the following are reasonably safe options for using secrets in your CloudFormation provisioned Lambda functions?
+  answers:
+    - text: "Pass them into your templates as clear text parameters, then into your Lambda function as enviroment variables. If you set the 'KmsKeyArn' parameter of that Lambda, it will be encrypted then stored."
+    - text: "Encrypt them locally first using a KMS key. Then parameter them into your templates to then be set as Lambda environment variables. Use KMS to decrypt the variable in the function."
+      correct: true
+    - text: "Locally, use SSM to encrypt and create paramters in the store. Pass the parameter's name into the template. Use SSM to decrypt and retrieve the value in your function."
+      correct: true
+    - text: "Pass them into your template as cleartext parameters and then into a Secrets Manager secret resource. Then access them from the Lambda using the Secrets Manager in the SDK."
+      correct: true
+  explanation: "All the options are perfectly reasonable other than the option to 'Let Lambda encypt using the KmsKeyArn'. There is currenly no way to get CloudFormation or Lambda to encrypt your secrets before putting them into environment vars. You can however, do this from the AWS Lambda console."
+  links:
+    - Secrets Manager (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-secretsmanager-secret.html#cfn-secretsmanager-secret-secretstring)
+    - Lambda (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-kmskeyarn)
+  lesson:
+    - Chapter 4 quiz
+  difficulty: H
+  questiontype: "3"
+  tags:
+    - CloudFormation
+000:
+  question: Which of the following works best if you need to pass a value from a child stack up to its parent?
+  answers:
+    - text: "Export the output from child stack and then use the intrinsic function AWS::ImportValue in the parent to get the value."
+    - text: "Export the output from the child stack and then in the parent stack, simply reference it using the GetAtt intrinsic function."
+      correct: true
+    - text: "You can simply reference the child's resources directly from the parent using GetAtt."
+    - text: "Use a Transform to export the value."
+  explanation: "You much first declare the value as an output on the child and then reference it from the parent using GetAtt. This allows for isolation of resource information to only that with the child decides to share with the parent."
+  links:
+    - Exporting Stack Output Values vs. Using Nested Stacks (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-exports.html#output-vs-nested)
+  lesson:
+    - Chapter 4 quiz
+  difficulty: H
+  questiontype: "3"
+  tags:
+    - CloudFormation
+000:
+  question: Template linting is very helpful, especially at identifying unmet permission related issues.
+  answers:
+    - text: "TRUE"
+    - text: "FALSE"
+      correct: true
+  explanation: "Permission related issues can only be determined during the deployment or runtime of the stack. No amount of template linting before that will uncover unmet permission related issues."
+  links:
+    - TITLE (URL)
+  lesson:
+    - Chapter 4 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+
+# CH 05
+000:
+  question: What works best for deploying stacks across multiple AWS accounts?
+  answers:
+    - text: "Use the AWS CLI command to deploy the CloudFormation stack and run once for each region and account you want to deploy."
+    - text: "You can't deploy stacks into multiple accounts without your IAM role having access to all those accounts."
+    - text: "Create a stack set and then specifing the regions and accounts you wish to deploy to."
+      correct: true
+    - text: "Setup a custom resource that will replicate your stack to multiple accounts and regions."
+  explanation: "Deploying to multiple accounts and regions is precisely what CloudFormation StackSets is designed for. Manually running the deploy for each account/region works, but is certainly the least efficiant. Custom Resources is not even an option here. Your personal IAM role does not require access to each account that will be deployed to."
+  links:
+    - StackSets Concepts (https://amzn.to/2XRpKnj)
+  lesson:
+    - Chapter 5 quiz
+  difficulty: M
+  questiontype: "3"
+  tags:
+    - CloudFormation
+000:
+  question: What CloudFormation feature is used to hypothetically propose a deploy and see what stacks differences would occur?
+  answers:
+    - text: "Test Changes"
+    - text: "Drift Detection"
+    - text: "Compare Changes"
+    - text: "Change Sets"
+      correct: true
+  explanation: "Change sets can be used to preemptively look at what changes would occur to the stack if you deployed."
+  links:
+    - Updating Stacks Using Change Sets (https://amzn.to/2XRRGYw)
+  lesson:
+    - Chapter 5 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: You need to allow team members to deploy stacks, as well as delete them, but you want to control what they have access to deploy as well as NOT give their individual accounts access to those services directly. Whats the most efficient way to do this?
+  answers:
+    - text: "Setup stack Create/Update/Delete policies that lock the resources down to only approved ones."
+    - text: "Use service roles, by restricting the role to the approved services and give those team members access to applying that role to deploying/updating/deleting stacks."
+      correct: true
+    - text: "Add resource policies in the template, locking down only the resources that are approved."
+    - text: "Ensure all users are added to a group and give that group access to the needed services."
+  explanation: "The most secure and efficient way to tackle this is with a Service Role. You give the role the needed access and allow members to use that role when making CloudFormation calls. This avoids the need for the individual team members needing the access and instead gets it from the role."
+  links:
+    - AWS CloudFormation Service Role (https://amzn.to/2Ahi310)
+  lesson:
+    - Chapter 5 quiz
+  difficulty: H
+  questiontype: "3"
+  tags:
+    - CloudFormation
+000:
+  question: What is the most effective and manageable way to lock down which resources in a stack can be updated or deleted?
+  answers:
+    - text: "Only give a subset of team members access to update or delete resources."
+    - text: "Setup stack policies to protect certain resources from being updated or deleted."
+      correct: true
+    - text: "Use stack protection to prevent any of the resources from being deleteed or updated."
+    - text: "Apply the 'Retain' Deletion Policy to your chosen resources."
+  explanation: "Stack policies can be applied in order to lock down specific resources from being updated or deleted. You can even using wildcards when referencing the logical resource ids."
+  links:
+    - Prevent Updates to Stack Resources (https://amzn.to/3hksL7E)
+  lesson:
+    - Chapter 5 quiz
+  difficulty: H
+  questiontype: "3"
+  tags:
+    - CloudFormation
+
+# CH 06
+000:
+  question: Which is the name of the service that updates CFN of the status during EC2 provisioning?
+  answers:
+    - text: "curStatus"
+    - text: "cfn-signal"
+      correct: true
+    - text: "cfn-hup"
+    - text: "config-sets"
+  explanation: "cfn-signal is a helper script that runs on the provisioning EC2 instance. It is used to signal to CloudFormation which waits until the stated number of signals is recieved before proceeding."
+  links:
+    - cfn-signal (https://amzn.to/2ArL2iq)
+  lesson:
+    - Chapter 6 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: Which service is used to catch events regarding updates to the CloudFormation template?
+  answers:
+    - text: "cfn-init"
+    - text: "cfn-hup"
+      correct: true
+    - text: "cfn-signal"
+    - text: "cfn-events"
+  explanation: "The cfn-hup helper is a daemon that detects changes in resource metadata and runs user-specified actions when a change is detected."
+  links:
+    - cfn-hup (https://amzn.to/30uCpyl)
+  lesson:
+    - Chapter 6 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: When writing your CloudFormation template, what is the best way to ensure your EC2 instance is considered incomplete until after application provisioning.
+  answers:
+    - text: "Use cfn-hup to call our to CloudFormation once your application and service installation completes."
+    - text: "CloudFormation already waits until the EC2 instance has completed provisioning all its applications and services."
+    - text: "Setup a creation policy that wait for a single signal from the cfn-signal service at the end of your provisioning steps."
+      correct: true
+    - text: "Use a custom resource to monitor your EC2 instance's provisioning status."
+  explanation: "Custom resources won't help you here. However, it would work to set up a CreationPolicy to listen for the cfn-signal service to call out once provisioning is complete."
+  links:
+    - CreationPolicy Attribute (https://amzn.to/3fds8uB)
+  lesson:
+    - Chapter 6 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+
+# CH 07
+000:
+  question: As far as access to your AWS SAR published apps which of the following is possible?
+  answers:
+    - text: "Fully Public"
+    - text: "Only a specific role"
+    - text: "Only specific accounts"
+    - text: "Only specific applications"
+    - text: "List only but not deploy"
+    - text: "All of the above"
+      correct: true
+  explanation: "AWS SAR is completely integrated into IAM and thus gives you granular control over the service, who has access, to which applications, and which actions they can perform."
+  links:
+    - How the AWS Serverless Application Repository Works with IAM (https://amzn.to/2ASwLeF)
+  lesson:
+    - Chapter 7 quiz
+  difficulty: M
+  questiontype: "2"
+  tags:
+    - CloudFormation
+000:
+  question: AWS SAR hosts your templates and any lambda code for you.
+  answers:
+    - text: "Yes, it will even store the built code for all versions."
+    - text: "No"
+      correct: true
+    - text: "Not the lambda code, but it does store a copy of the template."
+    - text: "Yes"
+  explanation: "It is actually up to you to store all versions of the template and any lambda code in S3. Using AWS SAM greatly simplfies this task though."
+  links:
+    - Publishing Applications (https://amzn.to/3dSukaF)
+  lesson:
+    - Chapter 7 quiz
+  difficulty: H
+  questiontype: "2"
+  tags:
+    - CloudFormation
+000:
+  question: When using am AWS SAR app in your template, it is in the form of a(n)...
+  answers:
+    - text: "Custom Resource"
+    - text: "Macro"
+    - text: "Nested Stack"
+      correct: true
+    - text: "StackSet"
+  explanation: "You can either use AWS SAM transforms 'AWS::Serverless::Application' or as NestedStacks directly, either way they net out to be NestedStacks once tranforms have been processed."
+  links:
+    - AWS::Serverless::Application (https://amzn.to/2MPN12R)
+  lesson:
+    - Chapter 7 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+
+# CH 08
+000:
+  question: How much do you pay for each CloudFormation API call when using the AWS SDK?
+  answers:
+    - text: "It varies by AWS account type."
+    - text: "Free"
+      correct: true
+    - text: "$0.0003 per 100 transactions."
+    - text: "It's based on how long your stack takes to process."
+  explanation: "As with other AWS services and the SDK you only pay for what you provision. So you should explore ways you can make the AWS SDK and CloudFormation work more efficiently for you."
+  links:
+    - Getting Started (https://go.aws/37iZRju)
+  lesson:
+    - Chapter 8 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+
+# CH 09
+000:
+  question: Which of the CFN frameworks lets you chose from multiple programming languages to write in?
+  answers:
+    - text: "The Serverless Framework"
+    - text: "AWS CDK"
+      correct: true
+    - text: "AWS SAM"
+    - text: "Troposphere"
+  explanation: "Serverless Framework is YAML only. AWS SAM is YAML/JSON only. Troposphere is Python only. However, AWS CDK can be written in JavaScript, Typescript, Python, Java and C#."
+  links:
+    - What is the AWS CDK? (https://amzn.to/30t4oys)
+  lesson:
+    - Chapter 9 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: Which framework is the closest to native CloudFormation?
+  answers:
+    - text: "AWS SAM"
+      correct: true
+    - text: "Troposphere"
+    - text: "The Serverless Framework"
+    - text: "AWS CDK"
+  explanation: "AWS SAM specific transforms use standard and familar YAML syntax, and only really simplify the template, using native CloudFormation a Macro to process and still net out to native CloudFormation."
+  links:
+    - What Is the AWS Serverless Application Model (https://amzn.to/3fdHGhT)
+  lesson:
+    - Chapter 9 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: What are the two key differences between CloudFormation Resource Providers and Custom Resources?
+  answers:
+    - text: "Custom Resources are processed at deploy-time."
+    - text: "Custom Resources are not integrated into IAM and thus do not have any resource specific policies."
+      correct: true
+    - text: "With a publicly available registry, you will not longer have to fiddle with hosting and deploying instances of your macros/custom resources in order to implement them in your template. With resource providers you would just use them as you see fit. The hosting is already taken care of by the resource provider's author."
+      correct: true
+    - text: "Resource providers have custom resource 'types' when viewing the template."
+  explanation: "With custom resource providers author's are responsible to host their own code, which is then avaiable to the users of the registry. (public/private) So no more needing to host anything yourself to use. Secondly, Resource Providers are complete integrated into IAM and thus can have specific policies that can apply granularly to resources native to an external provider."
+  links:
+    - Creating Resource Providers (https://amzn.to/33hqxPA)
+  lesson:
+    - Chapter 9 quiz
+  difficulty: M
+  questiontype: "1"
+  tags:
+    - CloudFormation
+000:
+  question: Resource providers are completely free to create, host and implement. Which is the most true?
+  answers:
+    - text: "Yes"
+    - text: "Yes, other than the minor S3 hosting of the assets."
+    - text: "Yes, for native providers. Third-Party providers are billed per handler operation after the free tier."
+      correct: true
+    - text: "No"
+  explanation: "CloudFormation Providers are only billed for third-party providers and only after the free tier. All native providers (AWS::*, Alexa::*, and Custom::*) are completely free."
+  links:
+    - AWS CloudFormation Pricing (https://go.aws/3dmQDVV)
+  lesson:
+    - Chapter 9 quiz
+  difficulty: H
+  questiontype: "2"
+  tags:
+    - CloudFormation
