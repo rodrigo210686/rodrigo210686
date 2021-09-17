@@ -1,0 +1,4 @@
+mock
+vcrpy
+pytest
+coverage>=4.2
