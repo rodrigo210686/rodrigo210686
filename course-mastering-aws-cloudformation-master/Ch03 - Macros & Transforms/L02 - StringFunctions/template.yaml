@@ -9,3 +9,11 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: src
       Handler: index.handler
+Macro:
+  Type: AWS::CloudFormation::Macro
+  Properties:
+    Name: String
+    Description: String Processing Functions
+    FunctionsName: !GetAtt StringFunctions.Arn
+
+   
