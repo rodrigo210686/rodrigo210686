@@ -2,8 +2,8 @@
 ### PACKAGE Custom Resource Template
 ```shell
 REGION=us-east-1
-PROFILE=cloudguru
-DEPLOY_BUCKET=acg-deploy-bucket
+PROFILE=default
+DEPLOY_BUCKET=acg-rodrigo2186
 aws cloudformation package \
   --template-file template.yaml \
   --s3-bucket $DEPLOY_BUCKET \
