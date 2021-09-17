@@ -11,4 +11,9 @@ Resources:
     Properties:
       Tags:
         - Key: Upper
-          Value: !Ref InputString
+          Value:
+            "Fn::Transform":
+              - Name: String 
+                Paramters:
+                  InputString: !Ref InputString
+                  Operation: Upper
