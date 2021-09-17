@@ -16,5 +16,3 @@ Resources:
       Name: String
       Description: String Processing Functions
       FunctionName: !GetAtt StringFunction.Arn
-
-   
