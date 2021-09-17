@@ -7,9 +7,9 @@
 
 ### Upload Templates
 ```shell
-PROFILE=cloudguru
+PROFILE=default
 REGION=us-east-1
-CourseBucketParam=acg-deploy-bucket
+CourseBucketParam=acg-rodrigo218606
 aws s3 sync \
   . s3://$CourseBucketParam/coursefiles/nestedstacks \
   --exclude "*" \
